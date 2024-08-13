@@ -14,4 +14,12 @@ export class BasicReportsController {
     pdfDoc.pipe(response);
     pdfDoc.end();
   }
+
+  @Get('letter')
+  employmentLetter(@Res() response: Response) {
+    response.setHeader('Content-Type', 'application/pdf');
+    const pdfDoc = this.basicReportsService.employmentLetter();
+    pdfDoc.pipe(response);
+    pdfDoc.end();
+  }
 }

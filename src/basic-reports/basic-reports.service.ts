@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { PdfMakeService } from '../pdf-make/pdf-make.service';
 import { geBasicReportTemplate } from '../templates/basic-report';
+import { employmentLetterTemplate } from '../templates/employment-report';
 
 @Injectable()
 export class BasicReportsService extends PrismaClient implements OnModuleInit {
@@ -15,5 +16,9 @@ export class BasicReportsService extends PrismaClient implements OnModuleInit {
 
   basicPdf() {
     return this.pdfMakeService.createPdf(geBasicReportTemplate());
+  }
+
+  employmentLetter() {
+    return this.pdfMakeService.createPdf(employmentLetterTemplate());
   }
 }
