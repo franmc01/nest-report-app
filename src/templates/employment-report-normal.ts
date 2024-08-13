@@ -1,27 +1,14 @@
-import { Content, TDocumentDefinitions } from 'pdfmake/interfaces';
+import { TDocumentDefinitions } from 'pdfmake/interfaces';
 import { employmentLetterStyles } from './styles/employmentLetterStyles';
-import { DateFormatter } from '../helpers/date-formatter';
+import { headerSection } from './sections/header-section';
 
-const logo: Content = {
-  image: 'src/templates/assets/tucan-code-logo.png',
-  width: 100,
-  height: 100,
-  alignment: 'center',
-  margin: [0, 0, 0, 20],
-};
-export const employmentLetterTemplate = () => {
+export const employmentLetterTemplateNormal = () => {
   const docDocumentation: TDocumentDefinitions = {
     pageMargins: 60,
-    header: {
-      columns: [
-        logo,
-        {
-          text: `${DateFormatter.getDDMMMMYYYY(new Date())}`,
-          alignment: 'right',
-          margin: [0, 20, 20, 0],
-        },
-      ],
-    },
+    header: headerSection({
+      showDate: true,
+      showLogo: true,
+    }),
     content: [
       {
         text: 'Constancia de empleo',

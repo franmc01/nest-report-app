@@ -1,8 +1,9 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { PdfMakeService } from '../pdf-make/pdf-make.service';
 import { geBasicReportTemplate } from '../templates/basic-report';
-import { employmentLetterTemplate } from '../templates/employment-report';
+import { employmentLetterTemplateNormal } from '../templates/employment-report-normal';
+import { employmentLetterTemplateById } from '../templates/employment-report-by-id';
 
 @Injectable()
 export class BasicReportsService extends PrismaClient implements OnModuleInit {
@@ -19,6 +20,31 @@ export class BasicReportsService extends PrismaClient implements OnModuleInit {
   }
 
   employmentLetter() {
-    return this.pdfMakeService.createPdf(employmentLetterTemplate());
+    return this.pdfMakeService.createPdf(employmentLetterTemplateNormal());
+  }
+
+  async employmentLetterById(employeeId: number) {
+    const employee = await this.employees.findUnique({
+      where: {
+        id: employeeId,
+      },
+    });
+
+    if (!employee) {
+      throw new NotFoundException();
+    }
+
+    return this.pdfMakeService.createPdf(
+      employmentLetterTemplateById({
+        employerName: 'Francisco Marin',
+        employerPosition: 'Gerente de RRHH',
+        employeeName: employee.name,
+        employeePosition: employee.position,
+        employeeStartDate: employee.start_date,
+        employeeHours: employee.hours_per_day,
+        employeeWorkSchedule: employee.work_schedule,
+        employerCompany: 'Tucan Code Corp.',
+      }),
+    );
   }
 }
