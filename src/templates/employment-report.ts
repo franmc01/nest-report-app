@@ -1,5 +1,6 @@
 import { Content, TDocumentDefinitions } from 'pdfmake/interfaces';
 import { employmentLetterStyles } from './styles/employmentLetterStyles';
+import { DateFormatter } from '../helpers/date-formatter';
 
 const logo: Content = {
   image: 'src/templates/assets/tucan-code-logo.png',
@@ -15,7 +16,7 @@ export const employmentLetterTemplate = () => {
       columns: [
         logo,
         {
-          text: `${new Date()}`,
+          text: `${DateFormatter.getDDMMMMYYYY(new Date())}`,
           alignment: 'right',
           margin: [0, 20, 20, 0],
         },

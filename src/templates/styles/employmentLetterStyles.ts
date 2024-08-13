@@ -6,7 +6,7 @@ export const employmentLetterStyles: StyleDictionary = {
     bold: true,
     alignment: 'center',
     marginBottom: 16,
-    marginTop: 16,
+    marginTop: 40,
   },
   paragraph: {
     marginBottom: 32,
