@@ -22,7 +22,7 @@ export const getCountriesReportTemplate = (
     pageMargins: [40, 100, 40, 60],
     content: [
       {
-        layout: 'lightHorizontalLines',
+        layout: 'layout1',
         table: {
           headerRows: 1,
           widths: [50, 50, 50, '*', '*', '*'],
