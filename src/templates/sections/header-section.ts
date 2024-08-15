@@ -4,6 +4,8 @@ import { DateFormatter } from '../../helpers/date-formatter';
 interface HeaderSectionOptions {
   showLogo?: boolean;
   showDate?: boolean;
+  title?: string;
+  subtitle?: string;
 }
 
 const logo: Content = {
@@ -15,19 +17,41 @@ const logo: Content = {
 };
 
 export const headerSection = ({
-  showDate = false,
-  showLogo = false,
+  showDate = true,
+  showLogo = true,
+  title = '',
+  subtitle = '',
 }: HeaderSectionOptions): Content => {
-  return {
-    columns: [
-      showLogo ? logo : null,
-      showDate
-        ? {
-            text: `${DateFormatter.getDDMMMMYYYY(new Date())}`,
+  const headerLogo: Content = showLogo ? logo : null;
+  const headerTitle: Content = title
+    ? {
+        stack: [
+          {
+            text: title,
             alignment: 'right',
-            margin: [0, 20, 20, 0],
-          }
-        : null,
-    ],
+            margin: [0, 15, 0, 0],
+            bold: true,
+            fontSize: 22,
+          },
+          {
+            text: subtitle,
+            alignment: 'right',
+            margin: [0, 12, 0, 0],
+            bold: true,
+            fontSize: 14,
+          },
+        ],
+      }
+    : null;
+  const headerDate: Content = showDate
+    ? {
+        text: `${DateFormatter.getDDMMMMYYYY(new Date())}`,
+        alignment: 'right',
+        margin: [0, 20, 20, 0],
+      }
+    : null;
+
+  return {
+    columns: [headerLogo, headerTitle, headerDate],
   };
 };

@@ -4,6 +4,7 @@ import { PdfMakeService } from '../pdf-make/pdf-make.service';
 import { geBasicReportTemplate } from '../templates/basic-report';
 import { employmentLetterTemplateNormal } from '../templates/employment-report-normal';
 import { employmentLetterTemplateById } from '../templates/employment-report-by-id';
+import { getCountriesReportTemplate } from '../templates/countries-report';
 
 @Injectable()
 export class BasicReportsService extends PrismaClient implements OnModuleInit {
@@ -44,6 +45,21 @@ export class BasicReportsService extends PrismaClient implements OnModuleInit {
         employeeHours: employee.hours_per_day,
         employeeWorkSchedule: employee.work_schedule,
         employerCompany: 'Tucan Code Corp.',
+      }),
+    );
+  }
+
+  async getCountriesReport() {
+    const countries = await this.countries.findMany({
+      where: {
+        local_name: {
+          not: null,
+        },
+      },
+    });
+    return this.pdfMakeService.createPdf(
+      getCountriesReportTemplate({
+        countries,
       }),
     );
   }
