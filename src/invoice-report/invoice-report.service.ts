@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { PdfMakeService } from '../pdf-make/pdf-make.service';
 import { orderByIdReportTemplate } from '../templates/order-by-id';
@@ -12,8 +12,26 @@ export class InvoiceReportService extends PrismaClient implements OnModuleInit {
   constructor(private readonly pdfMakeService: PdfMakeService) {
     super();
   }
-  async getOrderByIdReport(orderId: string) {
-    console.log({ orderId });
-    return this.pdfMakeService.createPdf(orderByIdReportTemplate());
+  async getOrderByIdReport(orderId: number) {
+    const order: any = await this.orders.findUnique({
+      where: {
+        order_id: orderId,
+      },
+      include: {
+        customers: true,
+        order_details: {
+          include: {
+            products: true,
+          },
+        },
+      },
+    });
+
+    if (!order) {
+      throw new NotFoundException();
+    }
+    return this.pdfMakeService.createPdf(
+      orderByIdReportTemplate({ data: order }),
+    );
   }
 }

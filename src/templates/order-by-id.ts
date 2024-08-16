@@ -9,7 +9,57 @@ const bannerLogo: Content = {
   height: 30,
   margin: [10, 20],
 };
-export const orderByIdReportTemplate = (): TDocumentDefinitions => {
+
+export interface Order {
+  order_id: number;
+  customer_id: number;
+  order_date: Date;
+  customers: Customers;
+  order_details: OrderDetail[];
+}
+
+export interface Customers {
+  customer_id: number;
+  customer_name: string;
+  contact_name: string;
+  address: string;
+  city: string;
+  postal_code: string;
+  country: string;
+}
+
+export interface OrderDetail {
+  order_detail_id: number;
+  order_id: number;
+  product_id: number;
+  quantity: number;
+  products: Products;
+}
+
+export interface Products {
+  product_id: number;
+  product_name: string;
+  category_id: number;
+  unit: string;
+  price: number;
+}
+
+interface OrderValues {
+  data: Order;
+}
+
+export const orderByIdReportTemplate = ({
+  data,
+}: OrderValues): TDocumentDefinitions => {
+  //console.log(JSON.stringify(data, null, 2));
+
+  const subtotal = data.order_details.reduce(
+    (acc, detail) => acc + detail.quantity * detail.products.price,
+    0,
+  );
+
+  const total = subtotal * 1.15;
+
   return {
     header: bannerLogo,
     footer: footerSection,
@@ -34,8 +84,8 @@ export const orderByIdReportTemplate = (): TDocumentDefinitions => {
           },
           {
             text: [
-              { text: `Recibo No#: 10255\n`, bold: true },
-              `Fecha del recibo: ${DateFormatter.getDDMMMMYYYY(new Date())}\n Pagar antes de: ${DateFormatter.getDDMMMMYYYY(new Date())}`,
+              { text: `Recibo No#: ${data?.order_id}\n`, bold: true },
+              `Fecha del recibo: ${DateFormatter.getDDMMMMYYYY(data?.order_date)}\n Pagar antes de: ${DateFormatter.getDDMMMMYYYY(new Date())}`,
             ],
             alignment: 'right',
           },
@@ -57,7 +107,7 @@ export const orderByIdReportTemplate = (): TDocumentDefinitions => {
         marginBottom: 16,
       },
       {
-        text: `Razón Social: Richter Supermarkt\nMichael Holz\nGrenzacherweg 237`,
+        text: `Razón Social: Richter Supermarkt\n${data?.customers.customer_name}\nContact: ${data?.customers?.contact_name}`,
       },
 
       // Details
@@ -69,16 +119,21 @@ export const orderByIdReportTemplate = (): TDocumentDefinitions => {
           widths: [50, '*', 'auto', 'auto', 'auto'],
           body: [
             ['Id', 'Description', 'Quantity', 'Price', 'Total'],
-            [
-              10,
-              'Producto 1',
-              '20',
+            ...data.order_details.map((detail) => [
+              detail.order_detail_id.toString(),
+              detail.products.product_name,
+              detail.quantity.toString(),
               {
-                text: CurrencyFormatter.formatCurrency(1000),
+                text: CurrencyFormatter.formatCurrency(+detail.products.price),
                 alignment: 'right',
               },
-              'Total',
-            ],
+              {
+                text: CurrencyFormatter.formatCurrency(
+                  +detail.products.price * detail.quantity,
+                ),
+                alignment: 'right',
+              },
+            ]),
           ],
         },
       },
@@ -87,6 +142,38 @@ export const orderByIdReportTemplate = (): TDocumentDefinitions => {
       '\n\n',
 
       // Totales
+      {
+        columns: [
+          {
+            width: '*',
+            text: '',
+          },
+          {
+            width: 'auto',
+            layout: 'noBorders',
+            table: {
+              body: [
+                [
+                  'Subtotal',
+                  {
+                    text: CurrencyFormatter.formatCurrency(subtotal),
+                    alignment: 'right',
+                  },
+                ],
+                [
+                  { text: 'Total', bold: true },
+                  {
+                    text: CurrencyFormatter.formatCurrency(total),
+                    alignment: 'right',
+                    bold: true,
+                    fontSize: 16,
+                  },
+                ],
+              ],
+            },
+          },
+        ],
+      },
     ],
   };
 };

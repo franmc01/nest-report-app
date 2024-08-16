@@ -11,7 +11,7 @@ export class InvoiceReportController {
     @Res() response: Response,
     @Param('orderId') orderId: string,
   ) {
-    const pdfDoc = await this.invoiceReportService.getOrderByIdReport(orderId);
+    const pdfDoc = await this.invoiceReportService.getOrderByIdReport(+orderId);
     response.setHeader('Content-Type', 'application/pdf');
     pdfDoc.info.Title = 'Order-Report';
     pdfDoc.pipe(response);
