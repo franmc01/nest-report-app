@@ -6,6 +6,15 @@ import { Response } from 'express';
 export class InvoiceReportController {
   constructor(private readonly invoiceReportService: InvoiceReportService) {}
 
+  @Get('/svgs-charts')
+  async getSvgCharts(@Res() response: Response) {
+    const pdfDoc = await this.invoiceReportService.getSvgChart();
+    response.setHeader('Content-Type', 'application/pdf');
+    pdfDoc.info.Title = 'SvgChart-Report';
+    pdfDoc.pipe(response);
+    pdfDoc.end();
+  }
+
   @Get('/:orderId')
   async getOrderReport(
     @Res() response: Response,
