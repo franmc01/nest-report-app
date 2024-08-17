@@ -1,6 +1,6 @@
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
 import fs from 'fs';
-import { chartJsToImage } from '../helpers/chart-utils';
+import { CHART_COLORS, chartJsToImage, numbers } from '../helpers/chart-utils';
 
 const svg = fs.readFileSync('src/templates/assets/ford.svg', 'utf-8');
 
@@ -18,11 +18,49 @@ const generateChartImage = async () => {
     },
   };
 
-  return await chartJsToImage(chartConfig);
+  return await chartJsToImage(chartConfig, {
+    f: 'png',
+    height: 500,
+    width: 500,
+  });
+};
+
+const generateDoughnutImage = async () => {
+  const DATA_COUNT = 5;
+  const NUMBER_CFG = { count: DATA_COUNT, min: 0, max: 100 };
+
+  const data = {
+    labels: ['Red', 'Orange', 'Yellow', 'Green', 'Blue'],
+    datasets: [
+      {
+        label: 'Dataset 1',
+        data: numbers(NUMBER_CFG),
+        backgroundColor: Object.values(CHART_COLORS),
+      },
+    ],
+  };
+
+  const config = {
+    type: 'doughnut',
+    data: data,
+    options: {
+      responsive: true,
+      title: {
+        display: true,
+        text: 'Chart.js Doughnut Chart',
+      },
+    },
+  };
+
+  return await chartJsToImage(config, {});
 };
 
 export const basicSvgTemplate = async (): Promise<TDocumentDefinitions> => {
-  const chart = await generateChartImage();
+  const [chart, doughnut] = await Promise.all([
+    generateChartImage(),
+    generateDoughnutImage(),
+  ]);
+
   return {
     content: [
       {
@@ -30,6 +68,10 @@ export const basicSvgTemplate = async (): Promise<TDocumentDefinitions> => {
       },
       {
         image: chart,
+        width: 200,
+      },
+      {
+        image: doughnut,
         width: 200,
       },
     ],
