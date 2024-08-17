@@ -15,6 +15,15 @@ export class InvoiceReportController {
     pdfDoc.end();
   }
 
+  @Get('/estadisticas')
+  async estadisticas(@Res() response: Response) {
+    const pdfDoc = await this.invoiceReportService.estadisticas();
+    response.setHeader('Content-Type', 'application/pdf');
+    pdfDoc.info.Title = 'SvgChart-Report';
+    pdfDoc.pipe(response);
+    pdfDoc.end();
+  }
+
   @Get('/:orderId')
   async getOrderReport(
     @Res() response: Response,
