@@ -8,7 +8,12 @@ interface ChartEntry {
 interface ChartOptions {
   entries: ChartEntry[];
   position?: 'left' | 'right' | 'top' | 'bottom';
-  type: 'doughnut' | 'bar' | 'line';
+  type: 'doughnut' | 'bar' | 'line' | 'radar';
+  borderColor?: string;
+  backgroundColor?: string;
+  pointStyle?: 'circle' | 'triangule';
+  pointRadius?: number;
+  pointHoverRadius?: number;
 }
 
 export interface ConversionOptions<T> {
@@ -27,7 +32,7 @@ export const convertToChartEntries = <T>(
   }));
 };
 export const generateChart = async (options: ChartOptions) => {
-  const { entries, position, type } = options;
+  const { entries, position, type, ...rest } = options;
 
   const data = {
     labels: entries.map((entry) => entry.label),
@@ -35,6 +40,7 @@ export const generateChart = async (options: ChartOptions) => {
       {
         label: 'Dataset 1',
         data: entries.map((entry) => entry.value),
+        ...rest,
       },
     ],
   };

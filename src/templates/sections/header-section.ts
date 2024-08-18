@@ -28,14 +28,14 @@ export const headerSection = ({
         stack: [
           {
             text: title,
-            alignment: 'right',
+            alignment: 'center',
             margin: [0, 15, 0, 0],
             bold: true,
             fontSize: 22,
           },
           {
             text: subtitle,
-            alignment: 'right',
+            alignment: 'center',
             margin: [0, 12, 0, 0],
             bold: true,
             fontSize: 14,
@@ -48,6 +48,8 @@ export const headerSection = ({
         text: `${DateFormatter.getDDMMMMYYYY(new Date())}`,
         alignment: 'right',
         margin: [0, 20, 20, 0],
+        width: 120,
+        fontSize: 10,
       }
     : null;
 
