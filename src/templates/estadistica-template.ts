@@ -1,5 +1,9 @@
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
-import { chartJsToImage } from '../helpers/chart-utils';
+import {
+  ConversionOptions,
+  convertToChartEntries,
+  generateChart,
+} from './charts/donut.chart';
 
 interface TopCountry {
   country: string;
@@ -12,42 +16,22 @@ interface ReportOptions {
   topCountries: TopCountry[];
 }
 
-const generateTopCountry = async (topCountries: TopCountry[]) => {
-  const data = {
-    labels: topCountries.map((c) => c.country),
-    datasets: [
-      {
-        label: 'Dataset 1',
-        data: topCountries.map((c) => c.customers),
-      },
-    ],
-  };
-
-  const config = {
-    type: 'doughnut',
-    data: data,
-    options: {
-      responsive: true,
-      legend: {
-        position: 'left',
-      },
-      plugins: {
-        datalabels: {
-          color: 'white',
-          font: {
-            weight: 'bold',
-            size: 14,
-          },
-        },
-      },
-    },
-  };
-
-  return await chartJsToImage(config, {});
-};
-
 export const estadisticaTemplate = async (options: ReportOptions) => {
-  const donutChart = await generateTopCountry(options.topCountries);
+  const topCountryConversionOptions: ConversionOptions<TopCountry> = {
+    getLabel: (item) => item.country,
+    getValue: (item) => item.customers,
+  };
+
+  const entries = convertToChartEntries(
+    options?.topCountries,
+    topCountryConversionOptions,
+  );
+
+  const donutChart = await generateChart({
+    type: 'doughnut',
+    entries,
+    position: 'left',
+  });
 
   const docDocumentation: TDocumentDefinitions = {
     content: [
