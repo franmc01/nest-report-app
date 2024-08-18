@@ -14,4 +14,22 @@ export class ExtraReportsController {
     pdf.pipe(response);
     pdf.end();
   }
+
+  @Get('html-report-2')
+  async getHtmlReport2(@Res() response: Response) {
+    const pdf = await this.extraReportsService.getHtmlReport2();
+    response.setHeader('Content-Type', 'application/pdf');
+    pdf.info.Title = 'HTML-Report';
+    pdf.pipe(response);
+    pdf.end();
+  }
+
+  @Get('html-report-3')
+  async getHtmlReport3(@Res() response: Response) {
+    const pdf = await this.extraReportsService.getHtmlReport3();
+    response.setHeader('Content-Type', 'application/pdf');
+    pdf.info.Title = 'HTML-Report';
+    pdf.pipe(response);
+    pdf.end();
+  }
 }

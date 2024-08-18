@@ -23,4 +23,36 @@ export class ExtraReportsService {
 
     return this.pdfMakeService.createPdf(docDefinitions);
   }
+
+  async getHtmlReport2() {
+    const html = fs.readFileSync('src/templates/html/basic-02.html', 'utf-8');
+    const content = getHtmlContent(html);
+
+    const docDefinitions: TDocumentDefinitions = {
+      header: headerSection({
+        showLogo: true,
+        showDate: true,
+      }),
+      content,
+    };
+
+    return this.pdfMakeService.createPdf(docDefinitions);
+  }
+
+  async getHtmlReport3() {
+    const html = fs.readFileSync('src/templates/html/basic-03.html', 'utf-8');
+    const content = getHtmlContent(html, {
+      client: 'Francisco',
+    });
+
+    const docDefinitions: TDocumentDefinitions = {
+      header: headerSection({
+        showLogo: true,
+        showDate: true,
+      }),
+      content,
+    };
+
+    return this.pdfMakeService.createPdf(docDefinitions);
+  }
 }
